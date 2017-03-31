@@ -26,8 +26,9 @@
 
   <body>
     <div id="mapid"></div>
-    <script>
+    <i class="fa fa-dot-circle-o" aria-hidden="true"></i>
 
+    <script>
     // initialize map in div id="mapid" element
     var mymap = L.map('mapid'),
         osmUrl ='http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -37,28 +38,24 @@
             maxZoom: 19,
             attribution: osmAttrib
         }).addTo(mymap),
+        userIcon = mymap.createcon("fa fa-dot-circle-o"),
         leafletPip,
         user_location,
         user_accuracy,
         geoFences,
         inPoly;
-
     var button = L.easyButton( 'fa-location-arrow', function(){
       mymap.locate({
         setView: true,
         Zoom: 16
       });
     }).addTo(mymap);
-
     mymap.setView([43.64231,-72.24933],14);
-
     mymap.on('locationfound', onLocationFound);
-
     // read in the geoJSON that contains the points and information
     $.getJSON('tour.geojson', function (data) {
         drawMap(data);
     });
-
     function drawMap(data) {
       var dataLayer = L.geoJSON( data, {
           pointToLayer: function(feature, latlng) {
@@ -69,39 +66,26 @@
           }
       }).addTo(mymap);
     };
-
-
-
-
     $.getJSON('testPoly.geojson', function (data) {
           addFences(data);
     });
-
     var fenceOptions = {
         fillOpacity: 0.0,
         opacity: 0.0
     };
-
     function addFences(data) {
       geoFences = L.geoJSON( data, {
           style: fenceOptions
       }).addTo(mymap);
-
     };
-
-    var dotIcon = L.icon({
-      iconUrl: <i class="fa fa-dot-circle-o" aria-hidden="true"></i>
-    });
 
     function onLocationFound(e){
       var radius = e.accuracy / 2;
-
-          user_location = L.marker(e.latlng, {icon: dotIcon}).addTo(mymap)
+          user_location = L.marker(e.latlng, {icon: userIcon}).addTo(mymap)
                 .bindPopup('This is my location.').addTo(mymap);
           user_accuracy = L.circle(e.latlng, {radius: radius}).addTo(mymap);
       geofencePopup(geoFences);
     };
-
     function geofencePopup (geoFences){
       var res = leafletPip.pointInLayer(user_location.getLatLng(), geoFences);
       if (res.length != 0){
@@ -111,7 +95,7 @@
         console.log('You are not in a polygon');
       }
     };
-
     </script>
   </body>
 </html>
+
